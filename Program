@@ -1,0 +1,381 @@
+---AN---
+import sklearn as sk
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.neural_network import MLPClassifier
+
+dataset=datasets.load_breast_cancer()
+print("Dataset of Breast Cancer : ")
+print(dataset)
+print("Dataset's datatype : ")
+print(type(dataset))
+print("-----------------------------------------------------------------------------------------")
+x=dataset.data
+y=dataset.target
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.33,random_state=42)
+clf=MLPClassifier()
+clf.fit(x_train,y_train)
+dataClass_test=clf.predict(x_test)
+dataClass_train=clf.predict(x_train)
+print("The BreastCancerDataset Type is : ")
+print(dataset.target_names[dataClass_test])
+print("score on train data: ",accuracy_score(y_train,dataClass_train))
+print("score on test data: ",accuracy_score(y_test,dataClass_test))
+print(confusion_matrix(y_test,dataClass_test,labels=[0,1,2]))
+print("Weights : 1",clf.coefs_[0])
+print("Weights : 1",clf.coefs_[1])
+print(classification_report(dataClass_test,y_test))
+
+---ANN Ch---
+import sklearn as sk
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import r2_score
+from sklearn.metrics import confusion_matrix
+
+dataset = pd.read_csv("data.csv")
+data= dataset.drop("id",axis=1)
+
+data=dataset.dropna(axis=1)
+
+print(data.info())
+
+X = data.iloc[:,2:].values
+
+Y = data.iloc[:,1].values
+
+
+X_train,X_test,y_train,y_test = train_test_split(X,Y, test_size=0.3, random_state=20)
+
+clf=MLPClassifier()
+clf.fit(X_train, y_train)
+dc_test=clf.predict(X_test)
+dc_train=clf.predict(X_train)
+print("Score on train data: ", accuracy_score(y_train, dc_train))
+print("Score on test data: ", accuracy_score(y_test, dc_test))
+
+---Decision Tree ---
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+dataset=pd.read_csv("data.csv")
+data=dataset.dropna(axis=1)
+data=data.drop("id",axis=1)
+
+X=data.iloc[:,1:].values
+Y=data.iloc[:,0].values
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+
+tree=DecisionTreeClassifier()
+tree.fit(X_train, Y_train)
+print('Decision Tree Training Accuracy : ',tree.score(X_train, Y_train))
+print('Decision Tree Prediction : ',tree.predict(X_test))
+
+---KMeans----
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import svm
+from sklearn import metrics
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
+
+dataset=pd.read_csv("housing.csv")
+
+X=dataset.iloc[:,:-1].values
+y=dataset.iloc[:,-1].values
+
+kmeans = KMeans(n_clusters=2, random_state=0) 
+
+kmeans.fit(X)
+labels = kmeans.labels_
+
+correct_labels = sum(y == labels)
+print("Result: %d out of %d samples were correctly labeled." % (correct_labels, y.size))
+print('Accuracy score: {0:0.2f}'. format(correct_labels/float(y.size)))
+
+---KMeans Algo---
+import sklearn as sk
+from sklearn.cluster import KMeans
+from sklearn import datasets
+from sklearn.metrics.cluster import homogeneity_score
+import matplotlib.pyplot as plt
+
+iris=datasets.load_iris()
+x=iris.data;
+y=iris.target;
+err=[]
+for i in range(1,11):
+    fest=KMeans(n_clusters=i,n_init=25,init='k-means++',random_state=0)
+    tpred_y=fest.fit_predict(x)
+    err.append(fest.inertia_)
+plt.plot(range(1,11),err)
+plt.title('Elbow Method')
+plt.xlabel('Number of Cluster')
+plt.ylabel('Error')
+plt.show()
+
+fest=KMeans(n_clusters=3,n_init=25,init='k-means++',random_state=0,tol=0.0001).tpred_y=fest.fit_predict(x)
+plt.scatter(x[tpred_y==0,0],x[tpred_y==0,1],s=100,c='red',label='Iris_Sentosa')
+plt.scatter(x[tpred_y==1,0],x[tpred_y==1,1],s=100,c='blue',label='Iris_Versicolor')
+plt.scatter(x[tpred_y==2,0],x[tpred_y==2,1],s=100,c='green',label='Iris_Virginica')
+
+#plt.scatter(fest.cluster_centers_[:0],fest.cluster_centers_[:1],s=100,c='yellow',label='centroids')
+
+plt.legend()
+plt.show()
+print('Score=',homogeneity_score(y,tpred_y))
+
+---KNN---
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+dataset=pd.read_csv("data.csv")
+data=dataset.dropna(axis=1)
+data= data.drop("id",axis=1)
+
+X = data.iloc[:,1:31].values 
+Y = data.iloc[:,0].values
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state = 0)
+
+clf = KNeighborsClassifier(n_neighbors=3)
+clf.fit(X_train, Y_train)
+    
+print('KNN Algorihtm Training Accuracy : ',clf.score(X_train, Y_train))
+    
+---MeanSquarError----
+import numpy as np
+from sklearn.metrics import mean_squared_error
+  
+x = np.array([2.0,2.4,1.5,3.5,3.5,3.5,3.5,3.7,3.7])
+  
+y = np.array([196,221,136,255,244,230,232,255,267])  
+
+print("Mean x:",np.mean(x))
+print("Mean y:",np.mean(y))
+
+xs=np.sum(x*x)
+xy=np.sum(x*y)
+n=np.size(x)
+x_mean=np.mean(x)
+y_mean=np.mean(y)
+
+b=((xy)-n*x_mean*y_mean)/((xs)-n*x_mean*x_mean)
+print("b:",b)
+
+a=(y_mean)-(b*x_mean)
+
+print("a:",a)
+y_pred=[]
+for i in x:
+    y_pred.append(a+(b*i))
+print("y_pred:",y_pred)
+print("Mean Suqare Error:",mean_squared_error(y,y_pred))
+
+---Liner Regration---
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+
+dataset=pd.read_csv("housing.csv")
+
+print(dataset.info())
+
+X=dataset.iloc[:,:-1].values
+Y=dataset.iloc[:,-1].values
+
+X_train, X_test, Y_train, Y_test=train_test_split(X, Y, test_size = 0.3, random_state=0)
+
+regr=linear_model.LinearRegression()
+regr.fit(X_train, Y_train)
+
+print('Liner Regression Training Accurancy : ',regr.score(X_train, Y_train))
+print('Liner Regression Prediction : ',regr.predict(X_test))
+
+---Simple Liner Regration---
+import sklearn as sk
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import LabelEncoder
+
+dataset=pd.read_csv('./Iris.csv')
+dataset=dataset.apply(LabelEncoder().fit_transform)
+
+x=dataset[['SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm']]
+y=dataset[['Species']]
+
+#prepare for classfication
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.33,random_state=42)
+
+#create model
+reg=LinearRegression()
+#train model
+reg.fit(x_train,y_train)
+
+dataClass=reg.predict(x_test)
+print(dataClass)
+print(reg.score(x_test,y_test))
+
+---Non Liner Regration---
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
+from sklearn.metrics import r2_score
+from sklearn.preprocessing import PolynomialFeatures
+
+df=pd.read_csv('./Fuel_consumption_2019.csv')
+df.info()
+input=print('press..')
+print(df.head(10))
+print('press..')
+print(df.describe())
+print('press..')
+
+df_x=df[['Fuel_Consumption_Comb']]
+df_y=df[['CO2_Emissions']]
+poly_fea=PolynomialFeatures(degree=2)
+df_x = poly_fea.fit_transform(df_x)
+x_train,x_test,y_train,y_test = train_test_split(df_x,df_y,test_size=0.33,random_state=42)
+reg = linear_model.LinearRegression()
+reg.fit(x_train,y_train)
+print("Coefficient",reg.coef_)
+print("Intercept",reg.intercept_)
+model = reg.predict(x_test)
+np.mean(np.absolute(model - y_test))
+i = np.mean((model - y_test)**2)
+print('Mean Square error is = {0}'.format(i))
+r2score = r2_score(model,y_test)
+print("R2 Score",r2score) 
+
+---Multiple Linner Regration---
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
+from sklearn.metrics import r2_score
+
+df=pd.read_csv('./Fuel_consumption_2019.csv')
+df.info()
+input=print('press..')
+print(df.head(10))
+print('press..')
+print(df.describe())
+print('press..')
+
+featureset=df[['Cylinders','Engine_Size','CO2_Emissions','Fuel_Consumption_Comb']]
+fig,(ax1,ax2,ax3)=plt.subplots(1,3)
+fig.suptitle('Horizontally')
+ax1.scatter(featureset.Cylinders,featureset.CO2_Emissions,color='red')
+ax1.set(xlabel='Cylinders',ylabel='CO2_Emissions')
+
+ax2.scatter(featureset.Engine_Size,featureset.CO2_Emissions,color='blue')
+ax2.set(xlabel='fual consumption',ylabel='CO2_Emissions')
+
+ax3.scatter(featureset.Fuel_Consumption_Comb,featureset.CO2_Emissions,color='green')
+ax3.set(xlabel='Fuel_Consumption_Comb',ylabel='CO2_Emissions')
+fig.show()
+
+dfx=df[['Engine_Size','Cylinders','Fuel_Consumption_Comb']]
+dfy=df[['CO2_Emissions']]
+
+x_train,x_test,y_train,y_test=train_test_split(dfx,dfy,test_size=0.33,random_state=42)
+
+reg=linear_model.LinearRegression()
+reg.fit(x_train,y_train)
+
+print("Coefficient",reg.coef_)
+print("Intercept",reg.intercept_)
+
+testy=reg.predict(x_test)
+np.mean(np.absolute(testy-y_test))
+
+msg=np.mean((testy - y_test)**2)
+print('Mean Square Error={0}'.format(msg))
+
+r2score=r2_score(testy,y_test)
+print('R2 score is{0}'.format(r2score))
+
+---SVM---
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import svm
+from sklearn import metrics
+
+dataset=pd.read_csv("data.csv")
+
+data=dataset.dropna(axis=1)
+data= data.drop("id",axis=1)
+X = data.iloc[:,1:].values
+Y = data.iloc[:,0].values
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state = 0)
+
+model=svm.SVC(gamma=0.0001)
+model.fit(X_train, Y_train)
+
+y_pred=model.predict(X_test)
+print("SVM Model Accurancy : ", model.score(X_train, Y_train))
+print("SVM Model Prediction: ", model.predict(X_test))
+print("SVM Model Accurancy : ", metrics.accuracy_score(Y_test, y_pred))
+
+---SVM iris---
+import sklearn as sk
+from sklearn import datasets
+from sklearn.svm import LinearSVC
+from sklearn import svm
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+
+dataset=datasets.load_iris()
+
+print(dataset)
+print(type(dataset))
+print('---------------')
+x=dataset.data
+y=dataset.target
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.33,random_state=42)
+
+svm_model=svm.SVC(kernel='linear')
+svm_model.fit(x_train,y_train)
+
+dataClass=svm_model.predict(x_test)
+print("The Iris Type is :")
+print(dataset.target_names[dataClass])
+print(accuracy_score(y_test,dataClass))
+print(confusion_matrix(y_test,dataClass,labels=[0,1,2]))
+
+---Tree Classfire---
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+df=pd.read_csv('./Iris.csv')
+df.info()
+print(df.head(5))
+print(df.describe())
+print('data loaded')
+
+x=df[['SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm']]
+y=df[['Species']]
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.33,random_state=42)
+
+t=DecisionTreeClassifier()
+t.fit(x_train,y_train)
+dataClass=t.predict(x_test)
+print("The Score is..")
+print(t.score(x_test,y_test))
